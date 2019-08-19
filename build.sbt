@@ -2,7 +2,7 @@ import org.scalajs.jsenv.jsdomnodejs.JSDOMNodeJSEnv
 
 lazy val scalaV   = "2.12.8"
 lazy val libV     = "0.1.0-SNAPSHOT"
-lazy val vueV     = "2.5.22"
+lazy val vueV     = "2.6.10"
 
 crossScalaVersions := Seq("2.10.6", "2.11.12", "2.12.8")
 
