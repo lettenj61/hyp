@@ -36,8 +36,11 @@ trait TagFactory {
     new Builder(name)
 }
 
-trait AttributeName {
+trait AttributeProvider {
   type Value
+
+  def attr[A](name: String)(implicit encode: A => Value): AttributeName[A] =
+    new AttributeName[A](name)
 
   class AttributeName[A](name: String) {
     def create[F](value: A)(implicit encode: A => Value): Attribute[F] =
@@ -45,5 +48,16 @@ trait AttributeName {
 
     def :=[F](value: A)(implicit encode: A => Value): Attribute[F] =
       create(value)(encode)
+  }
+}
+
+trait EventProvider {
+
+  class EventName[E](name: String) {
+    def bind[F](listener: E => F): EventHandler[F, E] =
+      EventHandler(name, listener)
+
+    def :=[F](listener: E => F): EventHandler[F, E] =
+      bind(listener)
   }
 }

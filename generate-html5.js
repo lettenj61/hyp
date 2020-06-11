@@ -15,7 +15,7 @@ ul var_ video wbr
 
   const body = data.reduce((blocks, name) => {
     const literal = name.replace(/_/g, '');
-    blocks.push(`  lazy val ${name}: Builder = builder("${literal}")`);
+    blocks.push(`  lazy val ${name} : Builder = builder("${literal}")`);
     return blocks;
   }, []);
 
@@ -23,10 +23,7 @@ ul var_ video wbr
 
   return `
 package com.github.thisisvesca
-package html
-
-import com.github.thisisvesca.virtualdom._
-import com.github.thisisvesca.virtualdom.VirtualDom._
+package virtualdom
 
 // GENERATED CODE ... DO NOT EDIT MANUALLY
 

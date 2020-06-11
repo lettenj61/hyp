@@ -1,10 +1,7 @@
 package com.github.thisisvesca
-package html
+package virtualdom
 
-import com.github.thisisvesca.virtualdom._
-import com.github.thisisvesca.virtualdom.VirtualDom._
-
-// GENERATED CODE ... DO NOT EDIT MANUALLY
+// GENERATED CODE .. DO NOT EDIT MANUALLY
 
 trait HtmlFactory extends TagFactory {
   lazy val a: Builder          = builder("a")

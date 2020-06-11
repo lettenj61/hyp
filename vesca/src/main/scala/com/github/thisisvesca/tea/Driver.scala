@@ -21,7 +21,7 @@ trait Driver {
       var value = initState
     }
 
-  val projector: Vue
+  val vm: Vue
 
   private def step(msg: Msg): Unit = {
     val (newState, newCmd) = program.update(msg, state.value)

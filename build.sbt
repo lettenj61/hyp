@@ -7,6 +7,7 @@ lazy val commonSettings = Seq(
   crossScalaVersions  := Seq("2.12.11", "2.13.2"),
   scalaVersion        := crossScalaVersions.value.last,
   organization        := "com.github.letitscale",
+  version             := thisLibraryVersion,
 
   scalacOptions in (Compile, compile) ++= Seq(
     "-deprecation",
@@ -46,4 +47,16 @@ lazy val vesca = project
   .settings(
     name := "vesca",
     description := "Elm like toolkit to build UI on top of Vue.js"
+  )
+
+
+lazy val root = project.in(file("."))
+  .settings(
+    publish := {},
+    publishLocal := {},
+  )
+  .aggregate(
+    virtualdom.js,
+    virtualdom.jvm,
+    vesca
   )
