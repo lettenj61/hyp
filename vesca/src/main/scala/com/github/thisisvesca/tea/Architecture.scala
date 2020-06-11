@@ -16,7 +16,6 @@ trait Architecture {
   def subscriptions(model: Model): Sub[Msg]
 }
 
-
 abstract class Program extends Architecture {
   def init(): (Model, Cmd[Msg])
 }

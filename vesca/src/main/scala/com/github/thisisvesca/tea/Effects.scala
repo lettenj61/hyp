@@ -16,7 +16,6 @@ object Sub {
   def none: Sub[Nothing] = Empty
 }
 
-
 sealed abstract class Cmd[+A] {
   def map[B](f: A => B): Cmd[B]
 }

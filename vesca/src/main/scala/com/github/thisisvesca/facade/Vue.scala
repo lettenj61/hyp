@@ -6,6 +6,4 @@ import scala.scalajs.js.annotation.JSImport
 
 @js.native
 @JSImport("vue", JSImport.Default, globalFallback = "Vue")
-class Vue(options: js.Any) extends js.Object {
-  
-}
+class Vue(options: js.Any) extends js.Object {}

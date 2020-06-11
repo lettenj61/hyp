@@ -1,0 +1,40 @@
+package vesca.example
+
+import vesca.html.Html
+
+object Counter {
+  sealed trait Msg
+  case object Increment extends Msg
+  case object Decrement extends Msg
+
+  type Model = Int
+
+  def update(msg: Msg, model: Model): Model = msg match {
+    case Increment =>
+      model + 1
+
+    case Decrement =>
+      model - 1
+  }
+
+  def view(model: Model): Html[Msg] = {
+    import vesca.html.Syntax._
+
+    div(
+      text("Hello, I am a counter"),
+      button(onClick := Increment, text("+")),
+      span(s"$model"),
+      button(onClick := Decrement, text("-"))
+    )
+  }
+
+  def main(args: Array[String]): Unit = {
+    val app = Vesca.create(
+      init = init,
+      update = update,
+      view = view
+    )
+
+    app.$mount("#app")
+  }
+}

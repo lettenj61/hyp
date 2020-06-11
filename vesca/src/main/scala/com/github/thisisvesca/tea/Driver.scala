@@ -8,7 +8,7 @@ trait Driver {
 
   val program: Program
 
-  type Msg = program.Msg
+  type Msg   = program.Msg
   type Model = program.Model
 
   trait State extends js.Object {
@@ -17,7 +17,9 @@ trait Driver {
 
   val (initState, initCmd) = program.init()
   protected[this] val state: State =
-    js.Dynamic.literal(value = initState).asInstanceOf[State]
+    new State {
+      var value = initState
+    }
 
   val projector: Vue
 
