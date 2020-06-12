@@ -1,5 +1,6 @@
 package com.github.thisisvesca
 package facade
+package vue
 
 import scala.scalajs.js
 import scala.scalajs.js.|

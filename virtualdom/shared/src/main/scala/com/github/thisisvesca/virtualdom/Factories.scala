@@ -53,11 +53,27 @@ trait AttributeProvider {
 
 trait EventProvider {
 
-  class EventName[E](name: String) {
+  def event[E](name: String): EventName[E] =
+    new EventName[E](name)
+
+  trait BaseEventName[E] {
+    def name: String
+    protected def useCapture: Boolean
+
     def bind[F](listener: E => F): EventHandler[F, E] =
-      EventHandler(name, listener)
+      EventHandler(name, listener, useCapture)
 
     def :=[F](listener: E => F): EventHandler[F, E] =
       bind(listener)
+  }
+
+  class EventName[E](val name: String) extends BaseEventName[E] {
+    protected val useCapture: Boolean = false
+    lazy val capture: EventCapture[E] =
+      new EventCapture(name)
+  }
+
+  class EventCapture[E](val name: String) extends BaseEventName[E] {
+    protected val useCapture: Boolean = true
   }
 }

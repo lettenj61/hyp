@@ -18,7 +18,7 @@ object VirtualDom {
     }
   }
   case class ClassName[+F](token: String)               extends Attribute[F]
-  case class EventHandler[+F, A](ty: String, f: A => F) extends Attribute[F]
+  case class EventHandler[+F, A](ty: String, f: A => F, capture: Boolean) extends Attribute[F]
   case object NoAttribute                               extends Attribute[Nothing]
 
   case class Tag[+F](tag: String, attributes: List[Attribute[F]], children: List[Node[F]])

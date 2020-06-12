@@ -2,7 +2,7 @@ package com.github.thisisvesca
 package tea
 
 import scala.scalajs.js
-import com.github.thisisvesca.facade.Vue
+import com.github.thisisvesca.facade.vue.Vue
 
 trait Driver {
 
