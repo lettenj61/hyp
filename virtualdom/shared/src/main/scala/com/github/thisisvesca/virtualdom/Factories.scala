@@ -39,15 +39,26 @@ trait TagFactory {
 trait AttributeProvider {
   type Value
 
-  def attr[A](name: String)(implicit encode: A => Value): AttributeName[A] =
+  def attr[A](name: String): AttributeName[A] =
     new AttributeName[A](name)
 
-  class AttributeName[A](name: String) {
+  class AttributeName[A](val name: String) {
     def create[F](value: A)(implicit encode: A => Value): Attribute[F] =
       new Property(name, encode(value))
 
     def :=[F](value: A)(implicit encode: A => Value): Attribute[F] =
       create(value)(encode)
+  }
+}
+
+trait AttributeIntrinsic {
+  self: AttributeProvider =>
+
+  protected def makeStyleMap(values: Iterable[(String, String)]): Value
+
+  object style extends AttributeName[String]("style") {
+    def ++=[F](values: Iterable[(String, String)]): Attribute[F] =
+      new Property(name, makeStyleMap(values))
   }
 }
 

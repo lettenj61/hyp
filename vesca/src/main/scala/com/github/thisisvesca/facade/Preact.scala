@@ -12,7 +12,7 @@ import org.scalajs.dom
 @JSImport("preact", JSImport.Default, globalFallback = "preact")
 object Preact extends js.Object {
   def h(`type`: String, props: js.Any, children: ComponentChild*): VNode         = js.native
-  def h(`type`: ComponentChild, props: js.Any, children: ComponentChild*): VNode = js.native
+  // def h(`type`: ComponentChild, props: js.Any, children: ComponentChild*): VNode = js.native
 
   def render(
       vnode: ComponentChild,
@@ -30,7 +30,7 @@ object PreactHooks extends js.Object {
   def useReducer[A, F](
       reducer: Reducer[A, F],
       initialState: A
-    ): js.Tuple2[A, js.Function1[A, Unit]] =
+    ): js.Tuple2[A, js.Function1[F, Unit]] =
     js.native
 
   def useMemo[A](factory: js.Function0[A], dependencies: js.Array[_]): A = js.native

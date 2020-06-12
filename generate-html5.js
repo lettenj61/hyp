@@ -1,6 +1,6 @@
 /* adopted from https://github.com/utkarshkukreti/purescript-hedwig/blob/32016433b98a78e11cdd8f6ad78305f78856081b/Rakefile */
 
-function genTagFactory() {
+function genTags() {
   const data = `
 a abbr address article aside audio b bdi bdo blockquote br button canvas
 caption cite code col colgroup datalist dd del details dfn div dl dt em
@@ -54,14 +54,6 @@ function genEvents() {
   "animation": "animation-start animation-end animation-iteration",
   "transition": "transition-end"
 }`);
-  function upperCamel(ident) {
-    const toTitle = text => text[0].toUpperCase() + text.substring(1);
-    if (ident.length === 1) {
-      return toTitle(ident[0]);
-    } else {
-      return ident.map(toTitle).join('');
-    }
-  }
 
   function getEventType(type) {
     switch (type) {
@@ -123,9 +115,120 @@ ${code.join('\n')}
   `.trim();
 }
 
+function genAttributes() {
+  // generated from jsx.d.ts of preact
+  // omit `style`, `class` and `className` as we special case them
+  const data = `
+accept:string;acceptCharset:string;accessKey:string;action:string;allowFullScreen:boolean;
+allowTransparency:boolean;alt:string;as:string;async:boolean;autoComplete:string;autoCorrect:string;
+autofocus:boolean;autoFocus:boolean;autoPlay:boolean;capture:boolean;cellPadding:number|string;
+cellSpacing:number|string;charSet:string;challenge:string;checked:boolean;cols:number;colSpan:number;
+content:string;contentEditable:boolean;contextMenu:string;controls:boolean;controlsList:string;
+coords:string;crossOrigin:string;data:string;dateTime:string;default:boolean;defer:boolean;
+dir:string;disabled:boolean;disableRemotePlayback:boolean;download:string|boolean;draggable:boolean;
+encType:string;form:string;formAction:string;formEncType:string;formMethod:string;formNoValidate:boolean;
+formTarget:string;frameBorder:number|string;headers:string;height:number|string;hidden:boolean;high:number;
+href:string;hrefLang:string;for_:string;htmlFor:string;httpEquiv:string;icon:string;id:string;inputMode:string;
+integrity:string;is:string;keyParams:string;keyType:string;kind:string;label:string;lang:string;list:string;
+loading:string;loop:boolean;low:number;manifest:string;marginHeight:number;marginWidth:number;
+max:number|string;maxLength:number;media:string;mediaGroup:string;method:string;min:number|string;
+minLength:number;multiple:boolean;muted:boolean;name:string;nonce:string;noValidate:boolean;open:boolean;
+optimum:number;pattern:string;placeholder:string;playsInline:boolean;poster:string;preload:string;
+radioGroup:string;readOnly:boolean;rel:string;required:boolean;role:string;rows:number;rowSpan:number;
+sandbox:string;scope:string;scoped:boolean;scrolling:string;seamless:boolean;selected:boolean;shape:string;
+size:number;sizes:string;slot:string;span:number;spellcheck:boolean;src:string;srcset:string;srcDoc:string;
+srcLang:string;srcSet:string;start:number;step:number|string;summary:string;tabIndex:number;target:string;
+title:string;type_:string;useMap:string;value:string|number;volume:string|number;width:number|string;
+wmode:string;wrap:string;about:string;datatype:string;inlist:string;prefix:string;property:string;resource:string;
+typeof:string;vocab:string;itemProp:string;itemScope:boolean;itemType:string;itemID:string;itemRef:string;
+  `.trim().split(/[;]/).map(val => val.trim()).filter(val => val !== '');
+
+  // console.log(data);
+
+  function getTypeOf(tsType, index) {
+    switch (tsType) {
+      case 'string':
+        return 'String';
+      case 'number':
+        return 'Double';
+      case 'boolean':
+        return 'Boolean';
+      default:
+        return `T${index}`; // bail
+    }
+  }
+
+  function makeSpecialSubclass(map, ident, types) {
+    const classIdent = titleCase(ident);
+    const primaryType = types[0];
+    map.subclasses.push(`  class ${classIdent}Name extends AttributeName[${primaryType}]("${ident}") {`);
+    types.slice(1).forEach(ty => {
+      map.subclasses.push(
+        `    def create[F](value: ${ty}): Attribute[F] = new Property(name, value)`,
+        `    def := [F](value: ${ty}): Attribute[F] = create(value)`
+      );
+    });
+    map.subclasses.push('  }');
+    map.subclasses.push('');
+
+    map.decls.push(
+      `  lazy val ${ident}: ${classIdent}Name = new ${classIdent}Name`,
+      ''
+    );
+  }
+
+  const blocks = data.reduce((map, expr) => {
+    let [ident, types] = expr.split(':');
+    try {
+      types = types.split('|').map((s, i) => getTypeOf(s, i));
+      
+      if (types.length > 1) {
+        makeSpecialSubclass(map, ident, types);
+      } else {
+        map.decls.push(
+          `  lazy val ${ident} : AttributeName[${types[0]}] = attr[${types[0]}]("${ident}")`
+        );
+      }
+    } catch (err) {
+      console.error({ err, types, ident });
+      process.exit(99)
+    }
+
+    return map;
+  }, { subclasses: [], decls: [] });
+
+  const code = blocks.subclasses.join('\n') + '\n' + blocks.decls.join('\n');
+
+  return `
+package com.github.thisisvesca
+package virtualdom
+
+import VirtualDom._
+
+// GENERATED CODE ... DO NOT EDIT MANUALLY
+
+trait StandardAttributeProvider extends AttributeProvider {
+${code}
+}
+  `.trim();
+}
+
+function titleCase(text) {
+  return text[0].toUpperCase() + text.substring(1);
+}
+
+function upperCamel(ident) {
+  if (ident.length === 1) {
+    return titleCase(ident[0]);
+  } else {
+    return ident.map(titleCase).join('');
+  }
+}
+
 const generator = {
-  genTagFactory,
-  genEvents
+  genTags,
+  genEvents,
+  genAttributes
 };
 
 const cmd = process.argv[2];

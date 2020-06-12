@@ -10,8 +10,11 @@ package object html {
   type Attribute[+F] = vdom.Attribute[F]
 
   object Html extends HtmlFactory
-  object Attributes extends AttributeProvider {
+  object Attributes extends StandardAttributeProvider with AttributeIntrinsic {
     type Value = js.Any
+
+    protected def makeStyleMap(values: Iterable[(String, String)]): Value =
+      js.Dictionary(values.toSeq: _*)
   }
   object Events extends GlobalEventProvider
 }
