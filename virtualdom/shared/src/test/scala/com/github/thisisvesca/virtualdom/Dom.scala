@@ -8,3 +8,6 @@ object attributes extends StandardAttributeProvider with AttributeIntrinsic {
   protected def makeStyleMap(values: Iterable[(String, String)]): String =
     values.toMap.toString
 }
+object events extends EventProvider {
+
+}

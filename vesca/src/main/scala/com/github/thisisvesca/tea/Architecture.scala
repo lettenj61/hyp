@@ -17,5 +17,5 @@ trait Architecture {
 }
 
 abstract class Program extends Architecture {
-  def init(): (Model, Cmd[Msg])
+  def init: (Model, Cmd[Msg])
 }

@@ -14,18 +14,18 @@ object PreactTestBackend {
   }
 
   @js.native
-  private trait FunctionComponent0 extends js.Function0[VNode]
+  type FunctionComponent0 = js.Function0[VNode]
 
-  class PreactDriver(program: Program) {
+  class PreactDriver(val program: Program) {
     type Model = program.Model
     type Msg = program.Msg
 
-    val (initModel, initCmd): (Model, Cmd[Msg]) = program.init()
+    val (initModel, initCmd): (Model, Cmd[Msg]) = program.init
 
     private var cmds: Cmd[Msg] = initCmd
     private var state: Model = initModel
 
-    val js.Tuple2(_, dispatch) = PreactHooks.useReducer(
+    val js.Tuple2(_, dispatch) = PreactHooks.useReducer[Model, Msg](
       reducer = reducer,
       state
     )
@@ -51,7 +51,7 @@ object PreactTestBackend {
           val handlerName = if (capture) ty + "Capture" else ty
           props(handlerName) = js.Any.fromFunction1[dom.Event, Unit] {
             (e: dom.Event) => {
-              val res: Msg = listener.f(e)
+              val res: Msg = listener.asInstanceOf[EventHandler[Msg, dom.Event]].f(e)
               dispatch(res)
             }
           }
@@ -69,9 +69,14 @@ object PreactTestBackend {
       () => h(html.tag, props, children)
     }
 
-    def run(node: dom.Element): Unit = {
+    def createVNode(): VNode = {
       val html = program.view(state).asInstanceOf[VirtualDom.Tag[Msg]]
       val F: FunctionComponent0 = compileFunctionComponent((Preact.h _).asInstanceOf[CreateElement], html)
+      F.asInstanceOf[VNode]
+    }
+
+    def run(node: dom.Element): Unit = {
+      val F = createVNode()
       Preact.render(F.asInstanceOf[ComponentChild], node)
     }
   }

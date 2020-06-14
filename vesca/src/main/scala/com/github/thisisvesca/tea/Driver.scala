@@ -15,7 +15,7 @@ trait Driver {
     var value: Model
   }
 
-  val (initState, initCmd) = program.init()
+  val (initState, initCmd) = program.init
   protected[this] val state: State =
     new State {
       var value = initState
