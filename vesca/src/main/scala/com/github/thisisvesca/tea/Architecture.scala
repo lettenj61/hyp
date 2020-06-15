@@ -1,7 +1,7 @@
 package com.github.thisisvesca
 package tea
 
-import com.github.thisisvesca.html.Html
+import com.github.thisisvesca.html._
 
 trait Architecture {
   self =>

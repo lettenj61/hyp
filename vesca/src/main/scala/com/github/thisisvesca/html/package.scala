@@ -7,6 +7,7 @@ import com.github.thisisvesca.virtualdom.VirtualDom._
 
 package object html {
   type Html[+F]      = Node[F]
+  type Tag[+F]       = VirtualDom.Tag[F]
   type Attribute[+F] = vdom.Attribute[F]
 
   object Html extends HtmlFactory

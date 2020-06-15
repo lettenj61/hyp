@@ -54,6 +54,17 @@ lazy val vesca = project
     // )
   )
 
+lazy val examples = project
+  .enablePlugins(ScalaJSPlugin)
+  .dependsOn(vesca)
+  .settings(commonSettings, domSettings)
+  .settings(
+    name := "vesca-examples",
+    skip in publish := true,
+    scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.NoModule)),
+    scalaJSUseMainModuleInitializer := true,
+    mainClass in (Compile, fastOptJS) := Some("com.github.thisisvesca.ExampleApp")
+  )
 
 lazy val root = project.in(file("."))
   .settings(

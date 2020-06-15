@@ -10,7 +10,7 @@ import org.scalatest._
 import org.scalatest.funspec._
 
 // TODO: consider switching back to minitest
-class PreactExampleTest extends AnyFunSpec  {
+class PreactExampleTest extends AnyFunSpec {
   import com.github.thisisvesca.facade.preact._
 
   describe("preact facade") {
@@ -19,10 +19,9 @@ class PreactExampleTest extends AnyFunSpec  {
 
     // TODO: We may need full enzyme support
     it("render component") {
-      val app = Preact.h("p", null, "Hello")
+      val app  = Preact.h("p", null, "Hello")
       val html = PreactRenderToString.render(app)
       assert(html == "<p>Hello</p>")
     }
   }
 }
-

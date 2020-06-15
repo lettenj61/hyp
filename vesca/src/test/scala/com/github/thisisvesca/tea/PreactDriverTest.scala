@@ -1,22 +1,29 @@
 package com.github.thisisvesca.tea
 
-import org.scalatest.funspec._
+import scala.scalajs.js
 
+import org.scalatest.funspec._
+import org.scalatest.BeforeAndAfterAll
 import com.github.thisisvesca.html._
+import com.github.thisisvesca.facade.enzyme._
 import com.github.thisisvesca.facade.preact._
 
 object Test extends Program {
-  type Model = Int
+  type Model = String
   sealed trait Msg
-  case object NoOp extends Msg
+  case object NoOp                     extends Msg
+  case class SetMessage(value: String) extends Msg
 
   def init: (Model, Cmd[Msg]) =
-    (0, Cmd.none)
+    ("hello", Cmd.none)
 
   def update(msg: Msg, model: Model): (Model, Cmd[Msg]) =
     msg match {
-      case _ =>
+      case NoOp =>
         (model, Cmd.none)
+
+      case SetMessage(value) =>
+        (value, Cmd.none)
     }
 
   def view(model: Model): Html[Msg] = {
@@ -24,8 +31,7 @@ object Test extends Program {
 
     div(
       id := "root",
-      h3(text("It works!")),
-      span(style ++= List("backgroundColor" -> "#f00"), text(s"$model"))
+      span(text(model))
     )
   }
 
@@ -33,18 +39,23 @@ object Test extends Program {
     Sub.none
 }
 
-class PreactDriverTest extends AnyFunSpec {
+class PreactDriverTest extends AnyFunSpec with BeforeAndAfterAll {
+
+  override def beforeAll(): Unit = {
+    super.beforeAll()
+    Enzyme.configure(new AdapterOptions {
+      override val adapter = new PreactAdapter
+    })
+  }
 
   describe("preact driver") {
-    try {
-      val driver = new PreactTestBackend.PreactDriver(Test)
-      val app = driver.createVNode()
+    val driver        = PreactProjection.driver(Test)
+    val TestComponent = driver.component
 
-      val a = PreactRenderToString.render(app)
-      assert(a == "p")
-    } catch {
-      case ex: Exception =>
-        ex.printStackTrace()
+    it("renders to string") {
+      val app = Preact.h(TestComponent)
+      val a   = PreactRenderToString.render(app)
+      assert(a == """<div id="root"><span>hello</span></div>""")
     }
   }
 }
