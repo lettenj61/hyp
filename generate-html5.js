@@ -22,7 +22,7 @@ ul var_ video wbr
   const code = body.join('\n');
 
   return `
-package com.github.thisisvesca
+package hyp
 package virtualdom
 
 // GENERATED CODE ... DO NOT EDIT MANUALLY
@@ -101,10 +101,10 @@ function genEvents() {
   }, []);
 
   return `
-package com.github.thisisvesca
+package hyp
 package html
 
-import com.github.thisisvesca.virtualdom._
+import hyp.virtualdom._
 import org.scalajs.dom._
 
 // GENERATED CODE ... DO NOT EDIT MANUALLY
@@ -200,7 +200,7 @@ typeof:string;vocab:string;itemProp:string;itemScope:boolean;itemType:string;ite
   const code = blocks.subclasses.join('\n') + '\n' + blocks.decls.join('\n');
 
   return `
-package com.github.thisisvesca
+package hyp
 package virtualdom
 
 import VirtualDom._
